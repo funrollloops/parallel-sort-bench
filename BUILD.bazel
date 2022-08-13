@@ -1,0 +1,9 @@
+cc_binary(
+  name = "bench",
+  srcs = ["bench.cc"],
+  deps = [
+    "@tbb",
+    "@hwy//hwy/contrib/sort:vqsort",
+    "@benchmark//:benchmark_main"
+  ]
+)

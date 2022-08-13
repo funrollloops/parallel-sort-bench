@@ -1,0 +1,57 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# Required by hwy
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+    ],
+)
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+ONETBB_VERSION = "2021.7.0-rc1"  # 2021.5.0 doesn't build on clang-14 or gcc-11.
+
+http_archive(
+    name = "tbb",
+    sha256 = "46bc6298a957dc1b0ae80a3e8b2fb1ff689a2f436e350c88cf12a425a3e87eae",
+    strip_prefix = "oneTBB-%s" % ONETBB_VERSION,
+    url = "https://github.com/oneapi-src/oneTBB/archive/v%s.zip" % ONETBB_VERSION,
+)
+
+BENCHMARK_VERSION = "1.7.0"
+
+http_archive(
+    name = "benchmark",
+    sha256 = "",
+    strip_prefix = "benchmark-%s" % BENCHMARK_VERSION,
+    url = "https://github.com/google/benchmark/archive/v%s.zip" % BENCHMARK_VERSION,
+)
+
+HIGHWAY_VERSION = "1.0.0"
+
+http_archive(
+    name = "hwy",
+    sha256 = "38d966923e159560253eb882a887409d4aeee7a9356e91d21f704b2db96f9d3e",
+    strip_prefix = "highway-%s" % HIGHWAY_VERSION,
+    url = "https://github.com/google/highway/archive/%s.zip" % HIGHWAY_VERSION,
+)
+
+CCE_VERSION = "d6734f1d7848800edc92de48fb9d9b82f2677958"
+
+http_archive(
+    name = "hedron_compile_commands",
+    sha256 = "a851b6de07a2fcee2df02132b19d0530bf85a149d373bb6963f5ad7bc5ad22b1",
+    strip_prefix = "bazel-compile-commands-extractor-%s" % CCE_VERSION,
+    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/%s.tar.gz" % CCE_VERSION,
+)
+
+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
+
+hedron_compile_commands_setup()
