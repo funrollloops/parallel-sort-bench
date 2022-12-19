@@ -4,9 +4,10 @@
 #include <vector>
 
 #include "benchmark/benchmark.h"
+#include "glog/logging.h"
 #include "hwy/contrib/sort/vqsort.h"
-#include "tbb/parallel_sort.h"
 #include "tbb/enumerable_thread_specific.h"
+#include "tbb/parallel_sort.h"
 
 template <typename T>
 std::vector<T> generate(T domain, size_t size) {
@@ -18,7 +19,6 @@ std::vector<T> generate(T domain, size_t size) {
   }
   return data;
 }
-
 struct StdSort {
   template <typename T>
   void operator()(std::vector<T> v) {
@@ -47,9 +47,10 @@ struct StdPartitionHwySort {
   void operator()(std::vector<T> v) {
     tbb::task_group tg;
     std::function<void(T*, T*)> task;
-    task = [&] (T*begin, T* end) {
-      while ((end-begin) > 16 << 20) {
-        auto m = std::partition(begin, end - 1, [pivot=end[-1]](T v) { return v < pivot; });
+    task = [&](T* begin, T* end) {
+      while ((end - begin) > 16 << 20) {
+        auto m = std::partition(begin, end - 1,
+                                [pivot = end[-1]](T v) { return v < pivot; });
         std::swap(*m, end[-1]);
         tg.run(std::bind(task, m + 1, end));
         end = m;
@@ -58,13 +59,14 @@ struct StdPartitionHwySort {
     };
     tg.run_and_wait(std::bind(task, v.data(), v.data() + v.size()));
     tg.wait();
+    CHECK(std::is_sorted(v.begin(), v.end()));
   }
 };
 
 template <typename T, typename F>
 static void BM_Sort(benchmark::State& state) {
   F sort;
-  const auto data = generate<T>(1 << 20, 100 << 20);
+  const auto data = generate<T>(1 << 20, 1000 << 20);
   for (auto _ : state) {
     sort(data);  // Implicit copy.
   }
@@ -72,10 +74,10 @@ static void BM_Sort(benchmark::State& state) {
   state.SetBytesProcessed(state.iterations() * data.size() * sizeof(T));
 }
 
-#define BENCH(impl) \
-BENCHMARK(BM_Sort<int64_t, impl>) \
-    ->Unit(benchmark::kMillisecond) \
-    ->MeasureProcessCPUTime();
+#define BENCH(impl)                   \
+  BENCHMARK(BM_Sort<int64_t, impl>)   \
+      ->Unit(benchmark::kSecond) \
+      ->MeasureProcessCPUTime();
 
 BENCH(StdSort);
 BENCH(TbbSort);
