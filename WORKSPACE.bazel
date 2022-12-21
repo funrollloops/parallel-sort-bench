@@ -29,7 +29,7 @@ BENCHMARK_VERSION = "1.7.0"
 
 http_archive(
     name = "benchmark",
-    sha256 = "",
+    sha256 = "e0e6a0f2a5e8971198e5d382507bfe8e4be504797d75bb7aec44b5ea368fa100",
     strip_prefix = "benchmark-%s" % BENCHMARK_VERSION,
     url = "https://github.com/google/benchmark/archive/v%s.zip" % BENCHMARK_VERSION,
 )
@@ -41,6 +41,15 @@ http_archive(
     sha256 = "38d966923e159560253eb882a887409d4aeee7a9356e91d21f704b2db96f9d3e",
     strip_prefix = "highway-%s" % HIGHWAY_VERSION,
     url = "https://github.com/google/highway/archive/%s.zip" % HIGHWAY_VERSION,
+)
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "com_google_absl",
+    sha256 = "8964b0abac57f94f4ddc3a1dcd8565e5fa5edd1620e326d931c1eabeb9267977",
+    strip_prefix = "abseil-cpp-4e5ff1559ca3bd7bb777a1c48106464cb656e041",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/4e5ff1559ca3bd7bb777a1c48106464cb656e041.zip"],
 )
 
 CCE_VERSION = "d6734f1d7848800edc92de48fb9d9b82f2677958"

@@ -1,9 +1,20 @@
+cc_library(
+    name = "flat_hash_map",
+    hdrs = [
+        "flat_hash_map/bytell_hash_map.hpp",
+        "flat_hash_map/flat_hash_map.hpp",
+        "flat_hash_map/unordered_map.hpp",
+    ],
+)
+
 cc_binary(
-  name = "bench",
-  srcs = ["bench.cc"],
-  deps = [
-    "@tbb",
-    "@hwy//hwy/contrib/sort:vqsort",
-    "@benchmark//:benchmark_main"
-  ]
+    name = "bench",
+    srcs = ["bench.cc"],
+    deps = [
+        ":flat_hash_map",
+        "@benchmark//:benchmark_main",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@hwy//hwy/contrib/sort:vqsort",
+        "@tbb",
+    ],
 )
