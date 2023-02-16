@@ -39,5 +39,19 @@ static void BM_Sort(benchmark::State& state) {
 
 BENCH(TbbSort);
 BENCH(HwySort);
-BENCH(IntelX86SIMDSort);
 BENCH(StdPartitionHwySort);
+#if ENABLE_HWY_PARTITION_SORT
+BENCH(HwyPartitionHwySort);
+#endif
+#if ENABLE_INTEL_X86_SIMD_SORT
+BENCH(IntelX86SIMDSort);
+#endif
+
+int main(int argc, char* argv[]) {
+  google::InitGoogleLogging(argv[0]);
+  benchmark::Initialize(&argc, argv);
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
+  google::InstallFailureSignalHandler();
+  benchmark::RunSpecifiedBenchmarks();
+  benchmark::Shutdown();
+}

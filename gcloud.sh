@@ -9,7 +9,7 @@ INSTANCE_NAME=parallel-sort-bench
 ZONE=us-west1-a
 
 function build {
-  bazelisk build -c opt --cxxopt=-march=icelake-server "$@"
+  bazelisk build -c opt --cxxopt=-march=icelake-server --cxxopt=-DENABLE_INTEL_X86_SIMD_SORT "$@"
 }
 
 function start {

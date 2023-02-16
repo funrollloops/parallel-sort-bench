@@ -25,7 +25,7 @@ TEST(Sort, StdPartitionHwySort) {
   EXPECT_THAT(sorted, ElementsAreArray(data));
 }
 
-#if 1
+#if ENABLE_INTEL_X86_SIMD_SORT
 TEST(Sort, IntelX86SIMDSort) {
   auto data = generate_random_data<int32_t>(1 << 20);
   IntelX86SIMDSort sorter;
