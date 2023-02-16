@@ -37,7 +37,6 @@ static void BM_Sort(benchmark::State& state) {
       ->Unit(benchmark::kSecond)    \
       ->MeasureProcessCPUTime();
 
-BENCH(StdSort);
 BENCH(TbbSort);
 BENCH(HwySort);
 BENCH(IntelX86SIMDSort);
