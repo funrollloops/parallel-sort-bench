@@ -21,6 +21,7 @@ cc_library(
 cc_test(
     name = "test",
     srcs = ["test.cc"],
+    linkstatic = True,
     deps = [
         ":impls",
         "@com_google_googletest//:gtest_main",

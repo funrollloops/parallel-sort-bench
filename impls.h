@@ -5,7 +5,7 @@
 #include "tbb/enumerable_thread_specific.h"
 #include "tbb/parallel_sort.h"
 
-using T = hwy::uint128_t;
+using T = uint64_t;
 
 struct StdSort {
   template <typename T>
@@ -52,3 +52,17 @@ struct StdPartitionHwySort {
     return std::move(v);
   }
 };
+
+#if 1
+#include "intel-x86-simd-sort/avx512-16bit-qsort.hpp"
+#include "intel-x86-simd-sort/avx512-32bit-qsort.hpp"
+#include "intel-x86-simd-sort/avx512-64bit-qsort.hpp"
+struct IntelX86SIMDSort {
+  template <typename T>
+  std::vector<T> operator()(std::vector<T> v) {
+    avx512_qsort(v.data(), v.size());
+    return v;
+  }
+};
+
+#endif

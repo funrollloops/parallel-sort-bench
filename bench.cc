@@ -4,7 +4,6 @@
 #include <random>
 
 #include "benchmark/benchmark.h"
-#include "glog/logging.h"
 
 #include "impls.h"
 
@@ -41,4 +40,5 @@ static void BM_Sort(benchmark::State& state) {
 BENCH(StdSort);
 BENCH(TbbSort);
 BENCH(HwySort);
+BENCH(IntelX86SIMDSort);
 BENCH(StdPartitionHwySort);
