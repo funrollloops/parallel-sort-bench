@@ -29,7 +29,7 @@ BENCHMARK_VERSION = "1.7.0"
 
 http_archive(
     name = "benchmark",
-    sha256 = "",
+    sha256 = "e0e6a0f2a5e8971198e5d382507bfe8e4be504797d75bb7aec44b5ea368fa100",
     strip_prefix = "benchmark-%s" % BENCHMARK_VERSION,
     url = "https://github.com/google/benchmark/archive/v%s.zip" % BENCHMARK_VERSION,
 )
@@ -59,6 +59,16 @@ http_archive(
     sha256 = "699b05acf15680e5fce6ed5ab629868984520b9eb4382fc7c04af2c5c3a310b4",
     strip_prefix = "highway-%s" % HIGHWAY_VERSION,
     url = "https://github.com/google/highway/archive/%s.zip" % HIGHWAY_VERSION,
+)
+
+X86_SIMD_SORT_VERSION = "7d7591cf5927e83e4a1e7c4b6f2c4dc91a97889f"
+
+http_archive(
+    name = "intel-x86-simd-sort",
+    sha256 = "cfa256d570ac04ec353c9dd3c7131232d7ec021416befec182ca004dce742989",
+    strip_prefix = "x86-simd-sort-%s" % X86_SIMD_SORT_VERSION,
+    url = "https://github.com/intel/x86-simd-sort/archive/%s.zip" % X86_SIMD_SORT_VERSION,
+    build_file = "@//:intel-x86-simd-sort.BUILD",
 )
 
 CCE_VERSION = "c6cd079bef5836293ca18e55aac6ef05134c3a9d"
