@@ -80,6 +80,14 @@ http_archive(
     url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/%s.tar.gz" % CCE_VERSION,
 )
 
+GOOGLETEST_VERSION = "1.13.0"
+http_archive(
+  name = "com_google_googletest",
+  sha256 = "ffa17fbc5953900994e2deec164bb8949879ea09b411e07f215bfbb1f87f4632",
+  strip_prefix = "googletest-%s" % GOOGLETEST_VERSION,
+  url = "https://github.com/google/googletest/archive/refs/tags/v%s.zip" % GOOGLETEST_VERSION,
+)
+
 load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
 
 hedron_compile_commands_setup()

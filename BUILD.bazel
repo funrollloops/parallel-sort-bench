@@ -2,10 +2,27 @@ cc_binary(
     name = "bench",
     srcs = ["bench.cc"],
     deps = [
+        ":impls",
         "@benchmark//:benchmark_main",
+    ],
+)
+
+cc_library(
+    name = "impls",
+    hdrs = ["impls.h"],
+    deps = [
         "@com_github_google_glog//:glog",
         "@hwy//hwy/contrib/sort:vqsort",
-        "@tbb",
         "@intel-x86-simd-sort",
+        "@tbb",
+    ],
+)
+
+cc_test(
+    name = "test",
+    srcs = ["test.cc"],
+    deps = [
+        ":impls",
+        "@com_google_googletest//:gtest_main",
     ],
 )
