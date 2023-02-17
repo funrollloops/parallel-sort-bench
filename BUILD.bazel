@@ -15,6 +15,7 @@ cc_library(
         "@hwy//hwy/contrib/sort:vqsort",
         "@intel-x86-simd-sort",
         "@tbb",
+        "@pdqsort",
     ],
 )
 

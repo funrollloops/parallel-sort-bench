@@ -71,6 +71,16 @@ http_archive(
     build_file = "@//:intel-x86-simd-sort.BUILD",
 )
 
+PDQ_SORT_VERSION = "b1ef26a55cdb60d236a5cb199c4234c704f46726"
+
+http_archive(
+    name = "pdqsort",
+    sha256 = "",
+    strip_prefix = "pdqsort-%s" % PDQ_SORT_VERSION,
+    url = "https://github.com/orlp/pdqsort/archive/%s.zip" % PDQ_SORT_VERSION,
+    build_file = "@//:pdqsort.BUILD",
+)
+
 CCE_VERSION = "c6cd079bef5836293ca18e55aac6ef05134c3a9d"
 
 http_archive(

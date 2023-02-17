@@ -4,48 +4,71 @@
 #include <random>
 
 #include "benchmark/benchmark.h"
-
 #include "impls.h"
 
-const std::vector<T>& generate(uint64_t domain, size_t size) {
-  static std::map<std::pair<uint64_t, size_t>, std::vector<T>> cache;
-  if (auto found = cache.find({domain, size}); found != cache.end()) {
-    return found->second;
-  }
-  std::mt19937 rng(0);
-  std::uniform_int_distribution<uint64_t> dist(0, domain);
-  std::vector<T> data(size);
-  for (T& datum : data) {
-    datum = T{dist(rng)};
-  }
-  return cache[{domain, size}] = std::move(data);
+namespace {
+using T = uint64_t;
+static constexpr size_t kSize = 1 << 30;
+static constexpr size_t kBlockSize = 1 << 20;
+
+std::vector<T> random() {
+  std::vector<T> data(kSize);
+  tbb::parallel_for(0UL, kSize / kBlockSize, [&](int shard) {
+    std::mt19937 rng(shard);
+    std::uniform_int_distribution<uint32_t> dist;
+    for (int i = shard * kBlockSize, end = i + kBlockSize; i != end; ++i) {
+      data[i] = dist(rng);
+    }
+  });
+  return data;
 }
 
-template <typename F>
-static void BM_Sort(benchmark::State& state) {
-  F sort;
-  const auto& data = generate(10000L << 20, 1000 << 20);
+std::vector<T> sorted_runs() {
+  std::vector<T> data(kSize);
+  tbb::parallel_for(0UL, kSize / kBlockSize, [&](int shard) {
+    std::mt19937 rng(shard);
+    std::uniform_int_distribution<uint8_t> dist8(0, 127);
+    int i = shard * kBlockSize;
+    data[i] = std::uniform_int_distribution<uint32_t>()(rng);
+    for (int end = i + kBlockSize; i != end; ++i) {
+      data[i] = data[i - 1] + dist8(rng);
+    }
+  });
+  return data;
+}
+
+template <typename Sorter>
+static void BM_Sort(benchmark::State& state, Sorter sorter,
+                    std::vector<T> (*gen)()) {
+  const auto& data = gen();
   for (auto _ : state) {
-    sort(data);  // Implicit copy.
+    sorter(data);  // Implicit copy.
   }
-  state.SetItemsProcessed(state.iterations() * data.size());
-  state.SetBytesProcessed(state.iterations() * data.size() * sizeof(T));
+  using ::benchmark::Counter;
+  state.counters["Items"] = Counter(kSize, Counter::kIsIterationInvariantRate);
+  state.counters["Bytes"] = Counter(kSize*sizeof(T), Counter::kIsIterationInvariantRate, Counter::OneK::kIs1024);
 }
 
-#define BENCH(impl)                 \
-  BENCHMARK(BM_Sort<impl>) \
-      ->Unit(benchmark::kSecond)    \
+#define BENCH2(impl, dist)                            \
+  BENCHMARK_CAPTURE(BM_Sort, impl/dist, impl{}, dist) \
+      ->Unit(benchmark::kSecond)                      \
       ->MeasureProcessCPUTime();
+
+#define BENCH(impl)     \
+  BENCH2(impl, random); \
+  BENCH2(impl, sorted_runs);
 
 BENCH(TbbSort);
 BENCH(HwySort);
 BENCH(StdPartitionHwySort);
+BENCH(PdqSort);
 #if ENABLE_HWY_PARTITION_SORT
 BENCH(HwyPartitionHwySort);
 #endif
 #if ENABLE_INTEL_X86_SIMD_SORT
 BENCH(IntelX86SIMDSort);
 #endif
+}  // namespace
 
 int main(int argc, char* argv[]) {
   google::InitGoogleLogging(argv[0]);

@@ -2,10 +2,9 @@
 
 #include "glog/logging.h"
 #include "hwy/contrib/sort/vqsort.h"
+#include "pdqsort.h"
 #include "tbb/enumerable_thread_specific.h"
 #include "tbb/parallel_sort.h"
-
-using T = uint64_t;
 
 struct StdSort {
   template <typename T>
@@ -26,6 +25,13 @@ struct HwySort {
   template <typename T>
   void operator()(std::vector<T> v) {
     return sorter(v.data(), v.size(), hwy::SortAscending());
+  }
+};
+
+struct PdqSort {
+  template <typename T>
+  void operator()(std::vector<T> data) {
+    pdqsort(data.begin(), data.end());
   }
 };
 
