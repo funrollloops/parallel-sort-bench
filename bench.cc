@@ -8,30 +8,30 @@
 
 namespace {
 using T = uint64_t;
-static constexpr size_t kSize = 1 << 30;
+static constexpr size_t kSize = 1 << 27;
 static constexpr size_t kBlockSize = 1 << 20;
 
-std::vector<T> random() {
-  std::vector<T> data(kSize);
+auto random() {
+  std::unique_ptr<std::array<T, kSize>> data{new std::array<T, kSize>};
   tbb::parallel_for(0UL, kSize / kBlockSize, [&](int shard) {
     std::mt19937 rng(shard);
     std::uniform_int_distribution<uint32_t> dist;
     for (int i = shard * kBlockSize, end = i + kBlockSize; i != end; ++i) {
-      data[i] = dist(rng);
+      (*data)[i] = dist(rng);
     }
   });
   return data;
 }
 
-std::vector<T> sorted_runs() {
-  std::vector<T> data(kSize);
+auto sorted_runs() {
+  std::unique_ptr<std::array<T, kSize>> data{new std::array<T, kSize>};
   tbb::parallel_for(0UL, kSize / kBlockSize, [&](int shard) {
     std::mt19937 rng(shard);
     std::uniform_int_distribution<uint8_t> dist8(0, 127);
     int i = shard * kBlockSize;
-    data[i] = std::uniform_int_distribution<uint32_t>()(rng);
+    (*data)[i++] = std::uniform_int_distribution<uint32_t>()(rng);
     for (int end = i + kBlockSize; i != end; ++i) {
-      data[i] = data[i - 1] + dist8(rng);
+      (*data)[i] = (*data)[i - 1] + dist8(rng);
     }
   });
   return data;
@@ -39,10 +39,10 @@ std::vector<T> sorted_runs() {
 
 template <typename Sorter>
 static void BM_Sort(benchmark::State& state, Sorter sorter,
-                    std::vector<T> (*gen)()) {
+                    std::unique_ptr<std::array<T, kSize>> (*gen)()) {
   const auto& data = gen();
   for (auto _ : state) {
-    sorter(data);  // Implicit copy.
+    sorter(std::vector<T>(data->begin(), data->end()));  // Implicit copy.
   }
   using ::benchmark::Counter;
   state.counters["Items"] = Counter(kSize, Counter::kIsIterationInvariantRate);
