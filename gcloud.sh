@@ -35,7 +35,7 @@ function ssh {
 function run-bench {
   build :bench
   gcloud compute scp bazel-bin/bench ${INSTANCE_NAME}:/tmp --zone ${ZONE}
-  ssh bash -c "/tmp/bench --benchmark_counters_tabular=true; rm -f /tmp/bench"
+  ssh bash -c "/tmp/bench --benchmark_counters_tabular=true; echo done, deleting /tmp/bench; rm -f /tmp/bench"
 }
 
 function run-test {
@@ -44,14 +44,14 @@ function run-test {
   ssh bash -c "/tmp/test; rm -f /tmp/test"
 }
 
-function launch-run-kill {
+if [[ $# -eq 0 ]]; then
   build :bench :test  ## Build first
   start
   run-test
   run-bench
   delete
-}
-
-for cmd in "$@"; do
-  "${cmd}"
-done
+else
+  for cmd in "$@"; do
+    "${cmd}"
+  done
+fi
