@@ -1,1 +1,1 @@
-build --cxxopt=-std=c++17 --cxxopt=-march=x86-64-v3 --cxxopt=-maes --copt=-march=x86-64-v3
+build --cxxopt=-std=c++17 --cxxopt=-march=native --cxxopt=-maes --copt=-march=native

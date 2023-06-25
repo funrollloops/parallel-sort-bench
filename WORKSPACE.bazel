@@ -61,13 +61,23 @@ http_archive(
     url = "https://github.com/google/highway/archive/%s.zip" % HIGHWAY_VERSION,
 )
 
-X86_SIMD_SORT_VERSION = "7d7591cf5927e83e4a1e7c4b6f2c4dc91a97889f"
+X86_SIMD_SORT_1_VERSION = "7d7591cf5927e83e4a1e7c4b6f2c4dc91a97889f"
 
 http_archive(
-    name = "intel-x86-simd-sort",
+    name = "intel-x86-simd-sort-1",
     sha256 = "cfa256d570ac04ec353c9dd3c7131232d7ec021416befec182ca004dce742989",
-    strip_prefix = "x86-simd-sort-%s" % X86_SIMD_SORT_VERSION,
-    url = "https://github.com/intel/x86-simd-sort/archive/%s.zip" % X86_SIMD_SORT_VERSION,
+    strip_prefix = "x86-simd-sort-%s" % X86_SIMD_SORT_1_VERSION,
+    url = "https://github.com/intel/x86-simd-sort/archive/%s.zip" % X86_SIMD_SORT_1_VERSION,
+    build_file = "@//:intel-x86-simd-sort.BUILD",
+)
+
+X86_SIMD_SORT_2_VERSION = "85f4e9c9a2bbc8766116dca4fc1755e608ab517d"
+
+http_archive(
+    name = "intel-x86-simd-sort-2",
+    sha256 = "df27b187cebb6ce1fd3e055f679a3eec6f61e53dc50e0af18a581417f676fc1e",
+    strip_prefix = "x86-simd-sort-%s" % X86_SIMD_SORT_2_VERSION,
+    url = "https://github.com/intel/x86-simd-sort/archive/%s.zip" % X86_SIMD_SORT_2_VERSION,
     build_file = "@//:intel-x86-simd-sort.BUILD",
 )
 
@@ -75,7 +85,7 @@ PDQ_SORT_VERSION = "b1ef26a55cdb60d236a5cb199c4234c704f46726"
 
 http_archive(
     name = "pdqsort",
-    sha256 = "",
+    sha256 = "1d3233bb341d70db17006487a53602b2b1596a5ba8fd496001610a30af066060",
     strip_prefix = "pdqsort-%s" % PDQ_SORT_VERSION,
     url = "https://github.com/orlp/pdqsort/archive/%s.zip" % PDQ_SORT_VERSION,
     build_file = "@//:pdqsort.BUILD",

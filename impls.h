@@ -24,7 +24,8 @@ struct HwySort {
   hwy::Sorter sorter;
   template <typename T>
   void operator()(std::vector<T> v) {
-    return sorter(v.data(), v.size(), hwy::SortAscending());
+    using hwy_type = std::conditional_t<sizeof(T) == 16, hwy::uint128_t, T>;
+    return sorter(reinterpret_cast<hwy_type*>(v.data()), v.size(), hwy::SortAscending());
   }
 };
 
@@ -51,7 +52,8 @@ struct StdPartitionHwySort {
         tg.run(std::bind(task, m + 1, end));
         end = m;
       }
-      tls.local()(begin, end - begin, hwy::SortAscending());
+      using hwy_type = std::conditional_t<sizeof(T) == 16, hwy::uint128_t, T>;
+      tls.local()(reinterpret_cast<hwy_type*>(begin), end - begin, hwy::SortAscending());
     };
     tg.run_and_wait(std::bind(task, v.data(), v.data() + v.size()));
     tg.wait();

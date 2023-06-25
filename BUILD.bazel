@@ -13,7 +13,7 @@ cc_library(
     deps = [
         "@com_github_google_glog//:glog",
         "@hwy//hwy/contrib/sort:vqsort",
-        "@intel-x86-simd-sort",
+        "@intel-x86-simd-sort-2//:intel-x86-simd-sort",
         "@tbb",
         "@pdqsort",
     ],
