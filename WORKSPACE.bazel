@@ -81,6 +81,17 @@ http_archive(
     build_file = "@//:intel-x86-simd-sort.BUILD",
 )
 
+
+X86_SIMD_SORT_4_VERSION = "38bce10c5c561775393424dfc45b022d425ed194"
+
+http_archive(
+    name = "intel-x86-simd-sort-4",
+    sha256 = "8545d2a4794803d41ea40770ab7dbf4a91ae274750ec2eded53cf851f8f360da",
+    strip_prefix = "x86-simd-sort-%s" % X86_SIMD_SORT_4_VERSION,
+    url = "https://github.com/intel/x86-simd-sort/archive/%s.zip" % X86_SIMD_SORT_4_VERSION,
+    build_file = "@//:intel-x86-simd-sort.BUILD",
+)
+
 PDQ_SORT_VERSION = "b1ef26a55cdb60d236a5cb199c4234c704f46726"
 
 http_archive(
