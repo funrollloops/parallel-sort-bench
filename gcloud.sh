@@ -35,7 +35,10 @@ function ssh {
 function run-bench {
   build :bench
   gcloud compute scp bazel-bin/bench ${INSTANCE_NAME}:/tmp --zone ${ZONE}
-  ssh bash -c "/tmp/bench --benchmark_counters_tabular=true; echo done, deleting /tmp/bench; rm -f /tmp/bench"
+  ssh bash -eufx <<EOF
+/tmp/bench --benchmark_counters_tabular=true
+rm -f /tmp/bench
+EOF
 }
 
 function run-test {
